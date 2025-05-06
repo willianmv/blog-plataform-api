@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: blog
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blogdb
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
