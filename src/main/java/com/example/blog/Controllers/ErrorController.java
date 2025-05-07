@@ -1,6 +1,6 @@
 package com.example.blog.Controllers;
 
-import com.example.blog.domain.dtos.ApiErrorResponse;
+import com.example.blog.domain.dtos.ApiErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorController {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleException(Exception ex){
+    public ResponseEntity<ApiErrorResponseDto> handleException(Exception ex){
         log.error("Caught exception ", ex);
-        ApiErrorResponse error = ApiErrorResponse.builder()
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message("An unexpected error occurred")
                 .build();
@@ -23,8 +23,8 @@ public class ErrorController {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex){
-        ApiErrorResponse error = ApiErrorResponse.builder()
+    public ResponseEntity<ApiErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex){
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
                 .build();
@@ -32,8 +32,8 @@ public class ErrorController {
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException ex){
-        ApiErrorResponse error = ApiErrorResponse.builder()
+    public ResponseEntity<ApiErrorResponseDto> handleIllegalStateException(IllegalStateException ex){
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
                 .status(HttpStatus.CONFLICT.value())
                 .message(ex.getMessage())
                 .build();
@@ -41,8 +41,8 @@ public class ErrorController {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException ex){
-        ApiErrorResponse error = ApiErrorResponse.builder()
+    public ResponseEntity<ApiErrorResponseDto> handleBadCredentialsException(BadCredentialsException ex){
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .message("Incorrect username or password")
                 .build();

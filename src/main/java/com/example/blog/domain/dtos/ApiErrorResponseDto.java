@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record ApiErrorResponse(
+public record ApiErrorResponseDto(
         int status,
         String message,
         List<FieldError> errors) {
