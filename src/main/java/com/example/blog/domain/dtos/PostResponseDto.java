@@ -1,5 +1,6 @@
 package com.example.blog.domain.dtos;
 
+import com.example.blog.domain.PostStatus;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public record PostResponseDto (
         Set<TagResponseDto> tags,
         int readingTime,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        PostStatus status
 ){
 }
