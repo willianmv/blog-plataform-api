@@ -8,14 +8,17 @@ import com.example.blog.domain.entities.Post;
 import com.example.blog.domain.entities.Tag;
 import com.example.blog.domain.entities.User;
 import com.example.blog.repositories.PostRepository;
+import com.example.blog.repositories.specs.PostSpecifications;
 import com.example.blog.services.CategoryService;
 import com.example.blog.services.PostService;
 import com.example.blog.services.TagService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,33 +38,29 @@ public class PostServiceImpl implements PostService {
     private static final int WORDS_PER_MINUTE = 200;
 
     @Override
-    public List<Post> getAllPosts(UUID categoryId, UUID tagId) {
-        if(categoryId != null && tagId != null){
-            Category category = categoryService.getCategoryById(categoryId);
-            Tag tag = tagService.getTagById(tagId);
+    public List<Post> getAllPosts(UUID categoryId, UUID tagId, LocalDate start, LocalDate end) {
+        Specification<Post> spec = PostSpecifications.hasStatus(PostStatus.PUBLISHED);
 
-            return postRepository.findAllByStatusAndCategoryAndTagsContaining(
-                    PostStatus.PUBLISHED, category, tag);
-
-        }
         if(categoryId != null){
             Category category = categoryService.getCategoryById(categoryId);
-            return postRepository.findAllByStatusAndCategory(
-                    PostStatus.PUBLISHED, category);
+            spec = spec.and(PostSpecifications.hasCategory(category));
         }
 
         if(tagId != null){
             Tag tag = tagService.getTagById(tagId);
-            return postRepository.findAllByStatusAndTags(
-                    PostStatus.PUBLISHED, tag);
+            spec = spec.and(PostSpecifications.hasTag(tag));
         }
 
-        return postRepository.findAllByStatus(PostStatus.PUBLISHED);
+        if(start != null && end != null){
+            spec = spec.and(PostSpecifications.createdAtBetween(start, end));
+        }
+
+        return postRepository.findAll(spec);
     }
 
     @Override
     public List<Post> getDraftPosts(User user) {
-        return postRepository.findAllByAuthorAndStatus(user, PostStatus.DRAFT);
+        return postRepository.findAll(PostSpecifications.hasStatus(PostStatus.DRAFT));
     }
 
     @Override

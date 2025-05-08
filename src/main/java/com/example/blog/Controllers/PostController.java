@@ -12,10 +12,12 @@ import com.example.blog.services.PostService;
 import com.example.blog.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,8 +35,10 @@ public class PostController {
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> listPosts(
             @RequestParam(required = false)UUID categoryId,
-            @RequestParam(required = false)UUID tagId){
-        List<Post> posts = postService.getAllPosts(categoryId, tagId);
+            @RequestParam(required = false)UUID tagId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate){
+        List<Post> posts = postService.getAllPosts(categoryId, tagId,startDate, endDate);
         List<PostResponseDto> postList = posts.stream().map(postMapper::toDto).toList();
         return ResponseEntity.ok(postList);
     }
