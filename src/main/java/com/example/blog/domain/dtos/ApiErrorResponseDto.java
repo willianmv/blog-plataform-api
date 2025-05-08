@@ -1,6 +1,7 @@
 package com.example.blog.domain.dtos;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public record ApiErrorResponseDto(
         String message,
         List<FieldError> errors) {
 
+    @Getter
     @Builder
     public static class FieldError{
         private String field;

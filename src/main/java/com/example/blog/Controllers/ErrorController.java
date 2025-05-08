@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+
 @RestControllerAdvice
 @Slf4j
 public class ErrorController {
@@ -59,15 +61,24 @@ public class ErrorController {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-//
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<ApiErrorResponseDto> handleEntityNotFoundException(MethodArgumentNotValidException ex){
-//        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
-//                .status(HttpStatus.BAD_REQUEST.value())
-//                .errors(ex.getFieldErrors().stream().map())
-//                .message("Field Validation Error")
-//                .build();
-//        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+
+        List<ApiErrorResponseDto.FieldError> fieldErrors = ex.getFieldErrors()
+                .stream()
+                .map(fieldError -> ApiErrorResponseDto.FieldError.builder()
+                        .field(fieldError.getField())
+                        .error(fieldError.getDefaultMessage())
+                        .build())
+                .toList();
+
+        ApiErrorResponseDto error = ApiErrorResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .errors(fieldErrors)
+                .message("Field Validation Error")
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
 }
