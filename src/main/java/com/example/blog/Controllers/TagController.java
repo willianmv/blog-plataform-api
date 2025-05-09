@@ -22,7 +22,6 @@ public class TagController {
 
     private final TagMapper tagMapper;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<TagResponseDto>> listTags(){
         List<TagResponseDto> tags = tagService.getTags().stream()
@@ -30,7 +29,6 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<List<TagResponseDto>> createTags(@RequestBody @Valid CreateTagsRequestDto dto){
         List<TagResponseDto> tags = tagService.crateTags(dto.names()).stream()
@@ -38,7 +36,6 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{tagId}")
     public ResponseEntity<Void> deleteTag(@PathVariable("tagId") UUID id){
         tagService.deleteTag(id);
