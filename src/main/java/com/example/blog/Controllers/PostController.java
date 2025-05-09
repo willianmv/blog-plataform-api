@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,9 +48,11 @@ public class PostController {
 
     @GetMapping("/drafts")
     public ResponseEntity<List<PostResponseDto>> listDraftPosts(Authentication authentication){
+
         BlogUserDetails userDetails = (BlogUserDetails) authentication.getPrincipal();
         UUID userId = userDetails.getId();
         User user = userService.getUserById(userId);
+
         List<Post> draftPosts = postService.getDraftPosts(user);
         List<PostResponseDto> list = draftPosts.stream().map(postMapper::toDto).toList();
         return ResponseEntity.ok(list);
@@ -62,9 +65,13 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestAttribute UUID userId,
+    public ResponseEntity<PostResponseDto> createPost(Authentication authentication,
             @RequestBody @Valid CreatePostRequestDto createPostDto){
+
+        BlogUserDetails userDetails = (BlogUserDetails) authentication.getPrincipal();
+        UUID userId = userDetails.getId();
         User loggedInUser = userService.getUserById(userId);
+
         CreatePostRequestHelper createPostRequestHelper = postMapper.toCreatePostRequest(createPostDto);
         Post creatadPost = postService.cratePost(loggedInUser, createPostRequestHelper);
         return new ResponseEntity<>(postMapper.toDto(creatadPost), HttpStatus.CREATED);
@@ -73,14 +80,33 @@ public class PostController {
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponseDto> updatePost(
             @PathVariable("postId") UUID postId ,
-            @RequestBody @Valid UpdatePostRequestDto updatePostRequestDto){
+            @RequestBody @Valid UpdatePostRequestDto updatePostRequestDto,
+            Authentication authentication){
+
+        BlogUserDetails userDetails = (BlogUserDetails) authentication.getPrincipal();
+        UUID userId = userDetails.getId();
+        Post post = postService.getPostById(postId);
+        if(!post.getAuthor().getId().equals(userId)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         UpdatePostRequestHelper updatePostRequest = postMapper.toUpdatePostRequest(updatePostRequestDto);
         Post updatedPost = postService.updatePost(postId, updatePostRequest);
         return ResponseEntity.ok(postMapper.toDto(updatedPost));
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable("postId") UUID postId){
+    public ResponseEntity<Void> deletePost(@PathVariable("postId") UUID postId, Authentication authentication){
+
+        Post post = postService.getPostById(postId);
+        BlogUserDetails userDetails = (BlogUserDetails) authentication.getPrincipal();
+        UUID userId = userDetails.getId();
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        if(!post.getAuthor().getId().equals(userId) && !isAdmin){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
     }

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -36,6 +35,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/roles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/roles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/roles/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/drafts").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/posts").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasRole("USER")
 
                         .anyRequest().authenticated()
                 )
