@@ -7,6 +7,7 @@ import com.example.blog.services.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class TagController {
 
     private final TagMapper tagMapper;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<TagResponseDto>> listTags(){
         List<TagResponseDto> tags = tagService.getTags().stream()
@@ -28,6 +30,7 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<List<TagResponseDto>> createTags(@RequestBody @Valid CreateTagsRequestDto dto){
         List<TagResponseDto> tags = tagService.crateTags(dto.names()).stream()
@@ -35,6 +38,7 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{tagId}")
     public ResponseEntity<Void> deleteTag(@PathVariable("tagId") UUID id){
         tagService.deleteTag(id);
