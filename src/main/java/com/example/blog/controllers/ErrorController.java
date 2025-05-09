@@ -1,4 +1,4 @@
-package com.example.blog.Controllers;
+package com.example.blog.controllers;
 
 import com.example.blog.domain.dtos.ApiErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;

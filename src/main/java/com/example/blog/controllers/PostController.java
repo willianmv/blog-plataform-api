@@ -1,4 +1,4 @@
-package com.example.blog.Controllers;
+package com.example.blog.controllers;
 
 import com.example.blog.domain.CreatePostRequestHelper;
 import com.example.blog.domain.UpdatePostRequestHelper;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 

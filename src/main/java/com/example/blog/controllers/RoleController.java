@@ -1,4 +1,4 @@
-package com.example.blog.Controllers;
+package com.example.blog.controllers;
 
 import com.example.blog.domain.dtos.CreateRoleRequestDto;
 import com.example.blog.domain.dtos.RoleResponseDto;
@@ -8,7 +8,6 @@ import com.example.blog.services.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

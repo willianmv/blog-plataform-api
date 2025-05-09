@@ -1,4 +1,4 @@
-package com.example.blog.Controllers;
+package com.example.blog.controllers;
 
 import com.example.blog.domain.dtos.CategoryDto;
 import com.example.blog.domain.dtos.CreateCategoryRequestDto;
@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
