@@ -60,7 +60,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getDraftPosts(User user) {
-        return postRepository.findAll(PostSpecifications.hasStatus(PostStatus.DRAFT));
+        return postRepository.findAll(Specification.where(
+                PostSpecifications.hasStatus(PostStatus.DRAFT)
+                        .and(PostSpecifications.hasAuthor(user))));
     }
 
     @Override

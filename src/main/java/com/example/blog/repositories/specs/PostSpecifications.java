@@ -4,6 +4,7 @@ import com.example.blog.domain.PostStatus;
 import com.example.blog.domain.entities.Category;
 import com.example.blog.domain.entities.Post;
 import com.example.blog.domain.entities.Tag;
+import com.example.blog.domain.entities.User;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -33,6 +34,11 @@ public class PostSpecifications {
             LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
             return criteriaBuilder.between(root.get("createdAt"), startDateTime, endDateTime);
         };
+    }
+
+    public static Specification<Post> hasAuthor(User user){
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("author"), user);
     }
 
 }

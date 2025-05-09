@@ -8,6 +8,7 @@ import com.example.blog.domain.dtos.UpdatePostRequestDto;
 import com.example.blog.domain.entities.Post;
 import com.example.blog.domain.entities.User;
 import com.example.blog.mappers.PostMapper;
+import com.example.blog.security.BlogUserDetails;
 import com.example.blog.services.PostService;
 import com.example.blog.services.UserService;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -44,8 +46,10 @@ public class PostController {
     }
 
     @GetMapping("/drafts")
-    public ResponseEntity<List<PostResponseDto>> listDraftPosts(@RequestAttribute UUID userId){
-        User user  = userService.getUserById(userId);
+    public ResponseEntity<List<PostResponseDto>> listDraftPosts(Authentication authentication){
+        BlogUserDetails userDetails = (BlogUserDetails) authentication.getPrincipal();
+        UUID userId = userDetails.getId();
+        User user = userService.getUserById(userId);
         List<Post> draftPosts = postService.getDraftPosts(user);
         List<PostResponseDto> list = draftPosts.stream().map(postMapper::toDto).toList();
         return ResponseEntity.ok(list);
